@@ -1,0 +1,13 @@
+{
+  "name": "euro-scrapper",
+  "version": "1.0.0",
+  "description": "Web scraper built with Playwright to collect data on commemorative 2-euro coins",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5"
+  }
+}
