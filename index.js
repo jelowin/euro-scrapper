@@ -24,32 +24,43 @@ const fs = require('fs');
 	// Navegamos a la página seleccionada
 	await page.goto(selectedPage.url);
 
-	const data = await page.$$eval('.content-box', (elements) => {
+	const data = await page.$$eval('.box', (elements) => {
+		const IMAGES_HOST = 'https://www.ecb.europa.eu/euro/coins/comm/html'
+
 		return elements.map((element) => {
-			const countryElement = element.querySelector('h3');
-			const country = countryElement ? countryElement.textContent.trim() : 'Unknown';
-			const coinInfo = element.querySelectorAll('p') ? Array.from(element.querySelectorAll('p')).map((p) => p.innerText) : null
+			const imageElement = element.querySelector('img');
+			const imageSrc = imageElement ? imageElement.getAttribute('src') : null;
 
-			if (country === 'Unknown' || coinInfo === null) {
-				console.log(`Problema con country: ${country} o coinInfo: ${coinInfo}`);
-				return null;
-			}
+			const contentBoxesElement = element.querySelectorAll('.content-box');
+			const data = Array.from(contentBoxesElement).map(element => {
+				const countryElement = element.querySelector('h3');
+				const country = countryElement ? countryElement.textContent.trim() : 'Unknown';
+				const coinInfo = element.querySelectorAll('p') ? Array.from(element.querySelectorAll('p')).map((p) => p.innerText) : null
 
-			const splittedInfo = coinInfo.flatMap(item => item.split('\n').filter(line => line.trim() !== ''));
-			const reason = splittedInfo[0];
-			const description = splittedInfo.slice(1)[0]
+				if (country === 'Unknown' || coinInfo === null) {
+					console.log(`Problema con country: ${country} o coinInfo: ${coinInfo}`);
+					return null;
+				}
 
-			const coin = {
-				country,
-				reason: reason?.replace(/^Motivo conmemorativo:\s*/, '').trim(),
-				description: description?.replace(/^(Descripción|Description):\s*/, '').trim()
-			}
+				const splittedInfo = coinInfo.flatMap(item => item.split('\n').filter(line => line.trim() !== ''));
+				const reason = splittedInfo[0];
+				const description = splittedInfo.slice(1)[0]
 
-			return coin
+				const coin = {
+					country,
+					description: description?.replace(/^(Descripción|Description):\s*/, '').trim(),
+					imageSrc: `${IMAGES_HOST}/${imageSrc}`,
+					reason: reason?.replace(/^Motivo conmemorativo:\s*/, '').trim()
+				}
+
+				return coin
+			});
+
+			return data
 		});
 	});
 
-	const filteredData = data.filter((element) => element !== null);
+	const filteredData = data.flat().filter((element) => element !== null);
 
 	// Guarda los datos en un archivo JSON
 	fs.writeFileSync(`${selectedPage.year}.json`, JSON.stringify(filteredData, null, 2));
