@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "Web scraper built with Playwright to collect data on commemorative 2-euro coins",
   "main": "index.js",
+  "type": "module",
   "scripts": {},
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.5"
+  },
+  "dependencies": {
+    "@libsql/client": "0.14.0",
+    "dotenv": "16.4.7",
+    "express": "4.21.2",
+    "uuid": "11.0.5"
   }
 }
