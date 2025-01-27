@@ -18,4 +18,11 @@ const turso = createClient({
 //   UNIQUE (country, description)
 // );
 
+// CREATE TABLE users (
+//   email TEXT NOT NULL,
+//   coinId UUID NOT NULL,
+//   UNIQUE (email, coinId),
+//   FOREIGN KEY (coinId) REFERENCES coins (id) ON DELETE CASCADE
+// );
+
 export default turso
